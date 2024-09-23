@@ -1,10 +1,9 @@
 <?php
 
-namespace Yazan Stash\LaravelAssertableLogs;
+namespace YazanStash\LaravelAssertableLogs;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Yazan Stash\LaravelAssertableLogs\Commands\LaravelAssertableLogsCommand;
 
 class LaravelAssertableLogsServiceProvider extends PackageServiceProvider
 {
@@ -15,11 +14,16 @@ class LaravelAssertableLogsServiceProvider extends PackageServiceProvider
          *
          * More info: https://github.com/spatie/laravel-package-tools
          */
-        $package
-            ->name('laravel-assertable-logs')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel_assertable_logs_table')
-            ->hasCommand(LaravelAssertableLogsCommand::class);
+        $package->name('laravel-assertable-logs');
+    }
+
+    public function packageBooted()
+    {
+        config()->set('logging.channels.assertable-test-logs', [
+            'driver' => 'custom',
+            'via' => CreateTestLogger::class,
+        ]);
+
+        config()->set('logging.default', 'assertable-test-logs');
     }
 }
